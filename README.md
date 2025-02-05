@@ -1,6 +1,7 @@
 **Projet : Développement d'outil décisionnel**
-    Auteurs :   Lecoq Lomann
-                Roesch Alexandre
+
+*Auteurs :   Lecoq Lomann
+            Roesch Alexandre*
 
 Dans ce projet nous apprenons à utiliser Git pour travailler en commun sur un même fichier. Pour ce faire, nous devons travailler sur le lecteur C.
 
