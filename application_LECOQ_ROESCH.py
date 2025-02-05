@@ -1,107 +1,74 @@
-"""
-📝 **Instructions** :
-- Installez toutes les bibliothèques nécessaires en fonction des imports présents dans le code, utilisez la commande suivante :
-
-conda create -n projet python pandas numpy matplotlib seaborn streamlit plotly
-conda activate projet
-bien se placer dans le répertoir avant de lancer
-run streamlit application_LECOQ_ROESCH.py
-
-- Complétez les sections en écrivant votre code où c’est indiqué.
-- Ajoutez des commentaires clairs pour expliquer vos choix.
-- Utilisez des emoji avec windows + ;
-- Interprétez les résultats de vos visualisations (quelques phrases).
-"""
-
-### 1. Importation des librairies et chargement des données
-import os
+import streamlit as st
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-import streamlit as st
 import plotly.express as px
+import seaborn as sns
+import matplotlib.pyplot as plt
 
-# Chargement des données
-#df = pd.read_csv("........ds_salaries.csv")
+# Charger les données
+def load_data():
+    df = pd.read_csv("ds_salaries.csv")  # Mets à jour le chemin si nécessaire
+    return df
 
-df = pd.read_csv("C:\projet_notebook\ds_salaries.csv")  # Charger un fichier CSV dans un DataFrame
+df = load_data()
 
-
-
-### 2. Exploration visuelle des données
-#votre code 
 st.title("📊 Visualisation des Salaires en Data Science")
 st.markdown("Explorez les tendances des salaires à travers différentes visualisations interactives.")
 
-
+# Aperçu des données
 if st.checkbox("Afficher un aperçu des données"):
-    #st.write(df.....)
+    st.write(df.head())
 
-
-#Statistique générales avec describe pandas 
-#votre code 
+# Statistiques générales
 st.subheader("📌 Statistiques générales")
+st.write(df.describe())
 
-
-
-### 3. Distribution des salaires en France par rôle et niveau d'expérience, uilisant px.box et st.plotly_chart
-#votre code 
+# Distribution des salaires en France
 st.subheader("📈 Distribution des salaires en France")
+df_france = df[df["company_location"] == "FR"]
+fig_box = px.box(df_france, x="experience_level", y="salary_in_usd", color="job_title")
+st.plotly_chart(fig_box)
 
+# Salaire moyen par catégorie
+st.subheader("📊 Salaire moyen par catégorie")
+categorie = st.selectbox("Sélectionnez une catégorie", ['experience_level', 'employment_type', 'job_title', 'company_location'])
+fig_bar = px.bar(df.groupby(categorie)["salary_in_usd"].mean().reset_index(), x=categorie, y="salary_in_usd")
+st.plotly_chart(fig_bar)
 
-
-
-### 4. Analyse des tendances de salaires :
-#### Salaire moyen par catégorie : en choisisant une des : ['experience_level', 'employment_type', 'job_title', 'company_location'], utilisant px.bar et st.selectbox 
-
-
-
-### 5. Corrélation entre variables
-# Sélectionner uniquement les colonnes numériques pour la corrélation
-#votre code 
-
-# Calcul de la matrice de corrélation
-#votre code
-
-
-# Affichage du heatmap avec sns.heatmap
-#votre code 
+# Corrélation entre variables
 st.subheader("🔗 Corrélations entre variables numériques")
+numeric_cols = df.select_dtypes(include=np.number).columns
+df_corr = df[numeric_cols].corr()
+fig, ax = plt.subplots()
+sns.heatmap(df_corr, annot=True, cmap="coolwarm", ax=ax)
+st.pyplot(fig)
 
+# Évolution des salaires pour les 10 postes les plus courants
+st.subheader("📈 Évolution des salaires")
+top_jobs = df["job_title"].value_counts().head(10).index
+df_top_jobs = df[df["job_title"].isin(top_jobs)]
+fig_line = px.line(df_top_jobs.groupby(["work_year", "job_title"])["salary_in_usd"].mean().reset_index(), x="work_year", y="salary_in_usd", color="job_title")
+st.plotly_chart(fig_line)
 
+# Filtres dynamiques
+st.subheader("🔍 Filtrer par salaire")
+min_salary, max_salary = st.slider("Sélectionnez une plage de salaire", int(df["salary_in_usd"].min()), int(df["salary_in_usd"].max()), (50000, 150000))
+st.write(df[(df["salary_in_usd"] >= min_salary) & (df["salary_in_usd"] <= max_salary)])
 
+# Impact du télétravail
+st.subheader("🏠 Impact du télétravail sur le salaire")
+fig_remote = px.box(df, x="remote_ratio", y="salary_in_usd", color="company_location")
+st.plotly_chart(fig_remote)
 
-### 6. Analyse interactive des variations de salaire
-# Une évolution des salaires pour les 10 postes les plus courants
-# count of job titles pour selectionner les postes
-# calcule du salaire moyen par an
-#utilisez px.line
-#votre code 
+# Filtrage avancé
+st.subheader("🔎 Filtrage avancé")
+exp_levels = st.multiselect("Sélectionnez le niveau d'expérience", df["experience_level"].unique())
+company_sizes = st.multiselect("Sélectionnez la taille d'entreprise", df["company_size"].unique())
 
+filtered_df = df.copy()
+if exp_levels:
+    filtered_df = filtered_df[filtered_df["experience_level"].isin(exp_levels)]
+if company_sizes:
+    filtered_df = filtered_df[filtered_df["company_size"].isin(company_sizes)]
 
-
-
-
-### 7. Salaire médian par expérience et taille d'entreprise
-# utilisez median(), px.bar
-#votre code 
-
-
-
-
-### 8. Ajout de filtres dynamiques
-#Filtrer les données par salaire utilisant st.slider pour selectionner les plages 
-#votre code 
-
-
-
-
-### 9.  Impact du télétravail sur le salaire selon le pays
-
-
-
-
-### 10. Filtrage avancé des données avec deux st.multiselect, un qui indique "Sélectionnez le niveau d'expérience" et l'autre "Sélectionnez la taille d'entreprise"
-#votre code 
-
+st.write(filtered_df)
