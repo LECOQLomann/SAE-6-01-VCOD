@@ -1,4 +1,4 @@
-    "# Projet : Développement d'outil décisionnel"
+**Projet : Développement d'outil décisionnel**
     Auteurs :   Lecoq Lomann
                 Roesch Alexandre
 
