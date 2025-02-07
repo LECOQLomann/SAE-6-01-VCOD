@@ -4,6 +4,10 @@
 # se situer dans le répertoir avec le fichier py
 # streamlit run application_LECOQ_ROESCH.py
 
+# CI-DESSOUS LE LIEN OBTENU AU MOMENT DE DEPLOY NOTRE APPLICATION
+# sae-6-01-vcod-fwjhhbnth43gkohq6twrhv.streamlit.app
+
+
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -55,8 +59,6 @@ fig_bar = px.bar(df_mean_salary, x=categorie, y='salary_in_usd', color=categorie
 st.plotly_chart(fig_bar)
 
 st.markdown("Ici nous pouvons voir le salaire moyen selon plusieurs axes d'analyse : le niveau d'expérience, la catégorie d'emploi, le métier, et le pays de l'entreprise. Pour ce qui est de la catégorie d'emploi, il y a un gros écart entre les contrats en plein temps et les 'contractors' et les autres. Le métier qui ressort bien aju dessus des autres est Applied Machine Learning Engineer. Et le pays qui paye le mieux ses employés dans la data est Israel.")
-
-
 
 ### 5. Corrélation entre variables
 # Sélectionner uniquement les colonnes numériques pour la corrélation*
