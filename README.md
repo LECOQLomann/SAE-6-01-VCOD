@@ -14,3 +14,6 @@ En premier lieu il fallait créer un environnement nommé projet, afin de dispos
 Nous avons d'abord utilisé chat gpt mais avons repris entièrement le code pour le faire seulement grâce à stackowerflow et d'autres sites, au risque de ne pas terminer le projet. Nous avons essayé de commenter autant que faire se pouvait.
 
 En fin de séance, nous avons push nos fichiers sur notre github via la console.
+
+Dans la dernière séance, nous devions déployer notre application.
+Malheuresement, les différentes commande de git (add, commit, push...) ne fonctionnais plus, nous avons donc décider de mettre a jour github a la main (clique bouton) afin de se concentrer sur le deployment.
