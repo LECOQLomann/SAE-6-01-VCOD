@@ -88,12 +88,13 @@ st.markdown("Ici on constate qu'il n'y a aucune corrélation forte entre nos var
 st.subheader("📈 Évolution des salaires")
 
 
-top = df['job_title'].value_counts().nlargest(10).index
-df_top = df[df['job_title'].isin(top)]
-salaire_an = df_top.groupby(['job_title', 'work_year'])['salary_in_usd'].mean().reset_index()
+top = df['job_title'].value_counts().nlargest(10).index # permet de compter les occurences de chaque intitulé de poste  et de garde les 10 plus courant
+df_top = df[df['job_title'].isin(top)] # permet de ne conserve que les 10 intituler séléctionner
+salaire_an = df_top.groupby(['job_title', 'work_year'])['salary_in_usd'].mean().reset_index() # calcule de la moyenne par poste et par année
     
-fig4 = px.line(salaire_an,x='work_year',y='salary_in_usd', color='job_title', title='Évolution des salaires pour les 10 postes les plus courants',labels={'salary_in_usd': 'Salaire moyen (USD)', 'work_year': 'Année'},template="plotly_white")
-st.plotly_chart(fig4)
+salaires_10 = px.line(salaire_an,x='work_year',y='salary_in_usd', color='job_title', title='Évolution des salaires pour les 10 postes les plus courants',labels={'salary_in_usd': 'Salaire moyen (USD)', 'work_year': 'Année'},template="plotly_white") #création d'un graphique en ligne pour visualisé l'évolution des salaire des 10 postes les plus courant
+
+st.plotly_chart(salaires_10)
 st.write('on observe une chute generale des salaires en 2021, probablement a cause de developpement des IA, soit a cause du confinement, mais ils se retablissent rapidements.' )
 
 
@@ -103,17 +104,24 @@ st.write('on observe une chute generale des salaires en 2021, probablement a cau
 
 st.subheader("Salaire médian par expérience et taille d'entreprise")
 
-df2 = df.groupby(['company_size', 'experience_level'])['salary_in_usd'].median().reset_index()
+df_exp_taille = df.groupby(['company_size', 'experience_level'])['salary_in_usd'].median().reset_index() # Calcul du salaire median selon la taille de la companies par le niveau d'expérience
     
-fig = px.bar(df2, title='somme des salaires médianes par expérience et taille d entreprise', x='company_size', y='salary_in_usd',color='experience_level')
-st.plotly_chart(fig)
+experience_taille = px.bar(df_exp_taille, title="Somme des salaires médianes par expérience et taille d'entreprise", x='company_size', y='salary_in_usd',color='experience_level') # création d'un barplot de la df df_exp_taille de la taille de la companie par le salaire median
+
+st.plotly_chart(experience_taille)
 st.write('la lecture de ce graphique n est pas evidante, il faut comprendre que chaque barre est une somme mediannes des types de salaries (leurs experience), et il faut utiliser le fait que graphque est interactif pour observer les mediannes exactes pour tel ou tel classe.' )
 
 ### 8. Ajout de filtres dynamiques
 #Filtrer les données par salaire utilisant st.slider pour selectionner les plages 
-#votre code 
 
+st.subheader("Ajout de filtres dynamiques")
 
+min_ = 0 # création d'une valeur minimum
+max_ = 500000 # création d'une valeur maximum
+selection_salaire = st.slider('Sélection de la plage de salaire', min_value= min_, max_value=max_, value=(min_,max_)) # création d'un slider avec les iformation des minimums et maximums créé plus tôt
+    
+salaire = df[(df['salary_in_usd'] >= selection_salaire[0]) & (df['salary_in_usd'] <= selection_salaire[1])] #filtrage du dataFrame en fonction de la plage de salaires sélectionner
+st.write(salaire)
 
 
 ### 9.  Impact du télétravail sur le salaire selon le pays
