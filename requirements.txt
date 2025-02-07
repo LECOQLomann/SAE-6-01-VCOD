@@ -6,5 +6,4 @@ jupyterlab
 kagglehub
 seaborn
 streamlit
-plotly express
-matplotlib pyplot
+plotly
