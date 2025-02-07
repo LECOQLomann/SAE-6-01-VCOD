@@ -4,16 +4,15 @@
 # se situer dans le répertoir avec le fichier py
 # streamlit run application_LECOQ_ROESCH.py
 
-# CI-DESSOUS LE LIEN OBTENU AU MOMENT DE DEPLOY NOTRE APPLICATION
-# sae-6-01-vcod-fwjhhbnth43gkohq6twrhv.streamlit.app
-
-
 import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
 import seaborn as sns
 import matplotlib.pyplot as plt
+
+st.markdown("https://github.com/LECOQLomann/SAE-6-01-VCOD")
+st.markdown("https://sae-6-01-vcod-fwjhhbnth43gkohq6twrhv.streamlit.app/")
 
 # Chargement des données
 #df = pd.read_csv("........ds_salaries.csv")
@@ -35,9 +34,10 @@ st.subheader("📌 Statistiques générales")
 st.write(df.describe(include='all')) # discribe pour voir les statistiques sur les variable quantitative 
 st.markdown("On constate que le salaire(USD) moyen est de 137 000$. Le taux de télétravail moyen est de 46%.")
 st.markdown("Le type d'emploi le plus représenté est FT ou Full time, le niveau d'expérience majoritaire est Senior, et le job le plus présent dans les données est Data Engineer. Les employés proviennent de 78 pays différents et majoritairemnt des US. Il y a 72 pays pour les entreprises, majoritairement en US.Et enfin, la taille la plus représentée en M, entreprise moyenne.")
+
+
 ### 3. Distribution des salaires en France par rôle et niveau d'expérience, uilisant px.box et st.plotly_chart
 st.subheader("📈 Distribution des salaires en France")
-
 
 df_france = df.query("company_location == 'FR'") # permet de filtré sur la france uniquement
 fig_box = px.box(df_france, x="experience_level", y="salary_in_usd", color="experience_level",title="Boxplot des salaires par niveau d'expérience en France")#On colore selon la valeur de la variable expéreince
@@ -60,6 +60,8 @@ st.plotly_chart(fig_bar)
 
 st.markdown("Ici nous pouvons voir le salaire moyen selon plusieurs axes d'analyse : le niveau d'expérience, la catégorie d'emploi, le métier, et le pays de l'entreprise. Pour ce qui est de la catégorie d'emploi, il y a un gros écart entre les contrats en plein temps et les 'contractors' et les autres. Le métier qui ressort bien aju dessus des autres est Applied Machine Learning Engineer. Et le pays qui paye le mieux ses employés dans la data est Israel.")
 
+
+
 ### 5. Corrélation entre variables
 # Sélectionner uniquement les colonnes numériques pour la corrélation*
 st.subheader("🔗 Corrélations entre variables numériques")
@@ -81,19 +83,31 @@ st.markdown("Ici on constate qu'il n'y a aucune corrélation forte entre nos var
 # Une évolution des salaires pour les 10 postes les plus courants
 # count of job titles pour selectionner les postes
 # calcule du salaire moyen par an
-#utilisez px.line
-#votre code 
+# utilisez px.line
+
+st.subheader("📈 Évolution des salaires")
 
 
-
+top = df['job_title'].value_counts().nlargest(10).index
+df_top = df[df['job_title'].isin(top)]
+salaire_an = df_top.groupby(['job_title', 'work_year'])['salary_in_usd'].mean().reset_index()
+    
+fig4 = px.line(salaire_an,x='work_year',y='salary_in_usd', color='job_title', title='Évolution des salaires pour les 10 postes les plus courants',labels={'salary_in_usd': 'Salaire moyen (USD)', 'work_year': 'Année'},template="plotly_white")
+st.plotly_chart(fig4)
+st.write('on observe une chute generale des salaires en 2021, probablement a cause de developpement des IA, soit a cause du confinement, mais ils se retablissent rapidements.' )
 
 
 ### 7. Salaire médian par expérience et taille d'entreprise
 # utilisez median(), px.bar
 #votre code 
 
+st.subheader("Salaire médian par expérience et taille d'entreprise")
 
-
+df2 = df.groupby(['company_size', 'experience_level'])['salary_in_usd'].median().reset_index()
+    
+fig = px.bar(df2, title='somme des salaires médianes par expérience et taille d entreprise', x='company_size', y='salary_in_usd',color='experience_level')
+st.plotly_chart(fig)
+st.write('la lecture de ce graphique n est pas evidante, il faut comprendre que chaque barre est une somme mediannes des types de salaries (leurs experience), et il faut utiliser le fait que graphque est interactif pour observer les mediannes exactes pour tel ou tel classe.' )
 
 ### 8. Ajout de filtres dynamiques
 #Filtrer les données par salaire utilisant st.slider pour selectionner les plages 
